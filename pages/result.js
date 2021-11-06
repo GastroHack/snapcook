@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 
 const getNearbyPlaces = async (lat, lot) => {
   const res = await fetch(`/api/places?lat=${lat}&lot=${lot}`);
@@ -15,31 +15,46 @@ const getRecipeDetails = async (id) => {
 
 export default function Result() {
   const router = useRouter();
-  const options = {
-    enableHighAccuracy: true,
-    timeout: 5000,
-    maximumAge: 0
-  };
-
+  const [stores, setStores] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const success = (pos) => {
     const crd = pos.coords;
 
     getNearbyPlaces(crd.latitude, crd.longitude)
       .then((res) => {
         console.log(res);
+        setStores(res);
+        setIsLoading(false);
       })
       .catch(console.warn);
   };
 
-  const error = (err) => {
-    console.warn(`ERROR(${err.code}): ${err.message}`);
-  };
-
   React.useEffect(() => {
-    window.navigator.geolocation.getCurrentPosition(success, error, options);
+    window.navigator.geolocation.getCurrentPosition(success);
     console.log(router);
     getRecipeDetails(router.query.recipeId);
   }, []);
 
-  return <div>you still need to buy:</div>;
+  return (
+    <div>
+      <div>you still need to buy: </div>
+      <div>
+        <ul>
+          {isLoading
+            ? "...loading"
+            : stores.results.map((store) => {
+                return (
+                  <li>
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${store.geometry.location.lat},${store.geometry.location.lng}`}
+                    >
+                      {store.name}
+                    </a>
+                  </li>
+                );
+              })}
+        </ul>
+      </div>
+    </div>
+  );
 }

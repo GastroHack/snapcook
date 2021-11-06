@@ -21,6 +21,17 @@ export default function Home() {
     setIsLoading(false);
   };
 
+  useEffect(() => {
+    if (isLoading) {
+      setTimeout(() => {
+        router.push({
+          pathname: "/result",
+          query: { result: "foo" },
+        });
+      }, 3000);
+    }
+  }, [isLoading]);
+
   return (
     <div className="h-full w-full flex flex-col justify-center items-center">
       <div className="flex space-x-2">
@@ -108,7 +119,7 @@ export default function Home() {
             onClick={() => {
               router.push({
                 pathname: "/result",
-                query: { recipeId: recipe.id }
+                query: { recipeId: recipe.id },
               });
             }}
             key={recipe.id}

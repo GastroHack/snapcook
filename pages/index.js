@@ -1,22 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 
-
-function uploadImage(file) {
-
-    const formData = new FormData();
-    formData.append('files', file[0]);
-    fetch('/api/guesser', {
-        method: 'POST',
-        body: formData
-    }).then((response) => {
-        console.log("response", response.json());
-    }).catch((err) => {
-        console.log("response",err);
-    });
-
-}
-
 const getMissingProducts = async (products) => {
   const res = await fetch(
     `/api/missingProducts?ingredients=${products.join(",")}`

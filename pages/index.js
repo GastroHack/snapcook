@@ -1,6 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 
+const getMissingProducts = async (products) => {
+  const res = await fetch(
+    `/api/missingProducts?ingredients=${products.join(",")}`
+  );
+  return res.json();
+};
+
 
 function uploadImage(file) {
 
@@ -17,13 +24,6 @@ function uploadImage(file) {
 
 }
 
-const getMissingProducts = async (products) => {
-  const res = await fetch(
-    `/api/missingProducts?ingredients=${products.join(",")}`
-  );
-  return res.json();
-};
-
 export default function Home() {
     const [currentProduct, setCurrentProduct] = useState("");
     const [products, setProducts] = useState([]);
@@ -37,17 +37,6 @@ export default function Home() {
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    if (isLoading) {
-      setTimeout(() => {
-        router.push({
-          pathname: "/result",
-          query: { result: "foo" },
-        });
-      }, 3000);
-    }
-  }, [isLoading]);
-
     return (
         <div className="h-full w-full flex flex-col justify-center items-center">
             <div className="flex space-x-2">
@@ -59,15 +48,16 @@ export default function Home() {
                     className="border-solid border-2 p-2"
                 />
                 <button
-                    disabled={!currentProduct}onClick={() => {
-                        setProducts([...products, currentProduct]);
-                        setCurrentProduct("");
-                    }}
-                    className="border-solid border-2 p-2"
-                >
-                    Add product
-                </button>
-            </div>
+                    disabled={!currentProduct}
+          onClick={() => {
+            setProducts([...products, currentProduct]);
+            setCurrentProduct("");
+          }}
+          className="border-solid border-2 p-2"
+        >
+          Add product
+        </button>
+      </div>
 
             <div>
                 <input

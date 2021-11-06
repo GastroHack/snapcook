@@ -1,6 +1,22 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 
+
+function uploadImage(file) {
+
+    const formData = new FormData();
+    formData.append('files', file[0]);
+    fetch('/api/guesser', {
+        method: 'POST',
+        body: formData
+    }).then((response) => {
+        console.log("response", response.json());
+    }).catch((err) => {
+        console.log("response",err);
+    });
+
+}
+
 const getMissingProducts = async (products) => {
   const res = await fetch(
     `/api/missingProducts?ingredients=${products.join(",")}`
@@ -48,27 +64,26 @@ export default function Home() {
     }
   }, [isLoading]);
 
-  return (
-    <div className="h-full w-full flex flex-col justify-center items-center">
-      <div className="flex space-x-2">
-        <input
-          value={currentProduct}
-          onChange={(e) => {
-            setCurrentProduct(e.target.value);
-          }}
-          className="border-solid border-2 p-2"
-        />
-        <button
-          disabled={!currentProduct}
-          onClick={() => {
-            setProducts([...products, currentProduct]);
-            setCurrentProduct("");
-          }}
-          className="border-solid border-2 p-2"
-        >
-          Add product
-        </button>
-      </div>
+    return (
+        <div className="h-full w-full flex flex-col justify-center items-center">
+            <div className="flex space-x-2">
+                <input
+                    value={currentProduct}
+                    onChange={(e) => {
+                        setCurrentProduct(e.target.value);
+                    }}
+                    className="border-solid border-2 p-2"
+                />
+                <button
+                    disabled={!currentProduct}onClick={() => {
+                        setProducts([...products, currentProduct]);
+                        setCurrentProduct("");
+                    }}
+                    className="border-solid border-2 p-2"
+                >
+                    Add product
+                </button>
+            </div>
 
             <div>
                 <input

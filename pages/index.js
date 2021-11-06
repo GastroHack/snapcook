@@ -37,18 +37,29 @@ export default function Home() {
     setIsLoading(false);
   };
 
-    return (
-        <div className="h-full w-full flex flex-col justify-center items-center">
-            <div className="flex space-x-2">
-                <input
-                    value={currentProduct}
-                    onChange={(e) => {
-                        setCurrentProduct(e.target.value);
-                    }}
-                    className="border-solid border-2 p-2"
-                />
-                <button
-                    disabled={!currentProduct}
+    useEffect(() => {
+    if (isLoading) {
+      setTimeout(() => {
+        router.push({
+          pathname: "/result",
+          query: { result: "foo" },
+        });
+      }, 3000);
+    }
+  }, [isLoading]);
+
+  return (
+    <div className="h-full w-full flex flex-col justify-center items-center">
+      <div className="flex space-x-2">
+        <input
+          value={currentProduct}
+          onChange={(e) => {
+            setCurrentProduct(e.target.value);
+          }}
+          className="border-solid border-2 p-2"
+        />
+        <button
+          disabled={!currentProduct}
           onClick={() => {
             setProducts([...products, currentProduct]);
             setCurrentProduct("");

@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
+const getMissingProducts = async (products) => {
+  const res = await fetch(
+    `/api/missingProducts?ingredients=${products.join(",")}`
+  );
+  return res.json();
+};
+
 export default function Home() {
   const [currentProduct, setCurrentProduct] = useState("");
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [recipes, setRecipes] = useState([]);
   const router = useRouter();
 
-  useEffect(() => {
-    if (isLoading) {
-      setTimeout(() => {
-        router.push({
-          pathname: "/result",
-          query: { result: "foo" }
-        });
-      }, 3000);
-    }
-  }, [isLoading]);
+  const searchRecipes = async () => {
+    const recipes = await getMissingProducts(products);
+    setRecipes(recipes);
+    setIsLoading(false);
+  };
 
   return (
     <div className="h-full w-full flex flex-col justify-center items-center">
@@ -29,6 +32,7 @@ export default function Home() {
           className="border-solid border-2 p-2"
         />
         <button
+          disabled={!currentProduct}
           onClick={() => {
             setProducts([...products, currentProduct]);
             setCurrentProduct("");
@@ -78,10 +82,10 @@ export default function Home() {
 
       {products.map((product, index) => {
         return (
-          <div className="flex space-x-2">
+          <div key={index} className="flex space-x-2">
             <div>{product}</div>
             <button
-              className=""
+              className="border-solid border-2 p-2"
               onClick={() => {
                 setProducts(products.filter((_, i) => i !== index));
               }}
@@ -89,6 +93,29 @@ export default function Home() {
               -
             </button>
           </div>
+        );
+      })}
+
+      {products.length > 0 && (
+        <button onClick={searchRecipes} className="border-solid border-2 p-2">
+          search recipes
+        </button>
+      )}
+
+      {recipes.map((recipe) => {
+        return (
+          <button
+            onClick={() => {
+              router.push({
+                pathname: "/result",
+                query: { recipeId: recipe.id }
+              });
+            }}
+            key={recipe.id}
+          >
+            {recipe.title}
+            <img src={recipe.image} className="w-12 h-12 rounded" />
+          </button>
         );
       })}
     </div>

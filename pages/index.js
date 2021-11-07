@@ -179,9 +179,10 @@ export default function Home() {
       {products.length > 0 && (
         <button
           onClick={searchRecipes}
-          className="m-6 border-solid font-bold text-xl text-white p-2 px-4 rounded-2xl absolute bottom-0 right-0 border-white border-4"
+          className="m-6 border-solid font-bold text-xl text-white p-2 px-4 rounded-2xl absolute bottom-0 right-0 border-white border-4 flex items-center"
         >
-          search recipes
+          <div className="mr-4">search recipes</div>
+          <Image src="/assets/arrow-right.svg" height="20" width="20" />
         </button>
       )}
     </div>

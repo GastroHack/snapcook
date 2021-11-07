@@ -37,54 +37,70 @@ export default function Result() {
     if (router.query.recipeId) {
       const recipeById = await getRecipesByIdsDetails([router.query.recipeId]);
       setRecipe(recipeById[0]);
+      console.log("recipe: ", recipe);
     }
   }, []);
 
   return (
-    <div>
-      {recipe && recipe.analyzedInstructions ? (
-        <>
-          <p>{recipe.title}</p>
-          <p>
-            {recipe.analyzedInstructions
-              .map(({ steps }) => {
-                return steps
-                  .map(({ step }) => {
-                    return step;
+    <div className="container mx-auto">
+      <div className="flex flex-col align-baseline">
+        {recipe && recipe.analyzedInstructions ? (
+          <>
+            <h1 className="text-4xl p-10">{recipe.title}</h1>
+            <div className="flex  flex-col">
+              <img
+                src={recipe.image}
+                width="250px"
+                className="rounded-xl pl-5"
+              />
+              <p className="p-10">
+                {recipe.analyzedInstructions
+                  .map(({ steps }) => {
+                    return steps
+                      .map(({ step }) => {
+                        return step;
+                      })
+                      .join(",");
                   })
-                  .join(",");
-              })
-              .flat()}
-          </p>
-        </>
-      ) : null}
+                  .flat()}
+              </p>
+              <div className="px-10">
+                <span>{recipe.glutenFree && "🌾 - glutenfree"} </span>
+                <span>{recipe.dairyFree && "🐄 - dairyfree"} </span>
+              </div>
+            </div>
+          </>
+        ) : null}
 
-      <br />
-      <div>you still need to buy: </div>
-      <br />
-      <ul>
-        {router.query.missedIngredients &&
-          router.query.missedIngredients
-            .split(",")
-            .map((ingredient) => <li>{ingredient}</li>)}
-      </ul>
-      <br />
-      <div>
-        <ul>
-          {isLoading
-            ? "...loading"
-            : stores.results.map((store, index) => {
-                return (
-                  <li key={index}>
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${store.geometry.location.lat},${store.geometry.location.lng}`}
-                    >
-                      {store.name}
-                    </a>
-                  </li>
-                );
-              })}
-        </ul>
+        <br />
+        <div className="px-10 ">
+          <h2 className="text-xl">You still need to buy: </h2>
+          <ul className="mt-5">
+            {router.query.missedIngredients &&
+              router.query.missedIngredients
+                .split(",")
+                .map((ingredient) => <li className="">✔️ {ingredient}</li>)}
+          </ul>
+        </div>
+        <div className="px-10 mt-10">
+          <h2 className="text-xl">Shops nearby: </h2>
+          <ul className="mt-5">
+            {isLoading
+              ? "...loading"
+              : stores.results.map((store, index) => {
+                  return (
+                    <li className="text-blue-500 " key={index}>
+                      <a
+                        target="_blank"
+                        href={`https://www.google.com/maps/search/?api=1&query=${store.geometry.location.lat},${store.geometry.location.lng}`}
+                      >
+                        🛒 {store.name}
+                      </a>
+                    </li>
+                  );
+                })}
+          </ul>
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import Image from "next/image";
 
 const getNearbyPlaces = async (lat, lot) => {
   const res = await fetch(`/api/places?lat=${lat}&lot=${lot}`);
@@ -37,23 +38,33 @@ export default function Result() {
     if (router.query.recipeId) {
       const recipeById = await getRecipesByIdsDetails([router.query.recipeId]);
       setRecipe(recipeById[0]);
-      console.log("recipe: ", recipe);
     }
   }, []);
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto bg-light-green">
+      <button
+        className="w-full flex justify-start p-4"
+        onClick={() => {
+          router.back();
+        }}
+      >
+        <Image
+          src="/assets/arrow-right.svg"
+          height="30"
+          width="30"
+          className="rotate-180"
+        />
+      </button>
       <div className="flex flex-col align-baseline">
         {recipe && recipe.analyzedInstructions ? (
           <>
-            <h1 className="text-4xl p-10">{recipe.title}</h1>
-            <div className="flex  flex-col">
-              <img
-                src={recipe.image}
-                width="250px"
-                className="rounded-xl pl-5"
-              />
-              <p className="p-10">
+            <h1 className="text-4xl p-10 pt-2 text-center">{recipe.title}</h1>
+            <div className="flex flex-col">
+              <div className="flex justify-center">
+                <img src={recipe.image} width="250px" className="rounded-2xl" />
+              </div>
+              <p className="p-10 text-justify">
                 {recipe.analyzedInstructions
                   .map(({ steps }) => {
                     return steps
@@ -84,20 +95,25 @@ export default function Result() {
         </div>
         <div className="px-10 mt-10">
           <h2 className="text-xl">Shops nearby: </h2>
-          <ul className="mt-5">
+          <ul className="mt-5 mb-8">
             {isLoading
               ? "...loading"
               : stores.results
                   .filter((store) => !store.types.includes("supermarket"))
+                  .slice(0, 5)
                   .map((store, index) => {
-                    console.log("STORE:", store);
                     return (
-                      <li className="text-blue-500 " key={index}>
+                      <li className="text-white inline-block" key={index}>
                         <a
                           target="_blank"
                           href={`https://www.google.com/maps/search/?api=1&query=Google&query_place_id=${store.place_id}`}
                         >
                           🛒 {store.name}
+                          <Image
+                            src="/assets/arrow-right.svg"
+                            height="10"
+                            width="10"
+                          />
                         </a>
                       </li>
                     );

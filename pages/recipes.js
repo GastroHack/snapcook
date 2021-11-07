@@ -30,7 +30,7 @@ export default function Home() {
       <button
         className="w-full flex justify-start mb-4"
         onClick={() => {
-          router.push("/");
+          router.back();
         }}
       >
         <Image

@@ -19,7 +19,7 @@ export default function Home() {
     router.push({
       pathname: "/recipes",
       query: {
-        ingredients: products.join(",")
+        ingredients: products.map((product) => product.title).join(",")
       }
     });
   };

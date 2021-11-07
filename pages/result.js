@@ -63,9 +63,10 @@ export default function Result() {
       <div>you still need to buy: </div>
       <br />
       <ul>
-        {router.query.missedIngredients.split(",").map((ingredient) => (
-          <li>{ingredient}</li>
-        ))}
+        {router.query.missedIngredients &&
+          router.query.missedIngredients
+            .split(",")
+            .map((ingredient) => <li>{ingredient}</li>)}
       </ul>
       <br />
       <div>

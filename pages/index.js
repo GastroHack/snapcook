@@ -115,12 +115,18 @@ export default function Home() {
       </div>
 
       {recipes.map((recipe) => {
+        console.log(recipe);
         return (
           <button
             onClick={() => {
               router.push({
                 pathname: "/result",
-                query: { recipeId: recipe.id }
+                query: {
+                  recipeId: recipe.id,
+                  missedIngredients: recipe.missedIngredients
+                    .map((ingredient) => ingredient.name.toLowerCase())
+                    .join(",")
+                }
               });
             }}
             key={recipe.id}

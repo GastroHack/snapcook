@@ -58,7 +58,16 @@ export default function Result() {
           </p>
         </>
       ) : null}
+
+      <br />
       <div>you still need to buy: </div>
+      <br />
+      <ul>
+        {router.query.missedIngredients.split(",").map((ingredient) => (
+          <li>{ingredient}</li>
+        ))}
+      </ul>
+      <br />
       <div>
         <ul>
           {isLoading

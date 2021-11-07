@@ -61,13 +61,13 @@ export default function Home() {
         </div>
         <div>Add ingredients manually or scan them</div>
       </div>
-      <div className="flex space-x-2">
+      <div className="flex space-x-2 p-4">
         <input
           value={currentProduct}
           onChange={(e) => {
             setCurrentProduct(e.target.value);
           }}
-          className="border-solid border-2 p-2"
+          className="rounded-2xl border-white border-4 p-2 items-center flex-grow"
         />
         <button
           disabled={!currentProduct}
@@ -78,43 +78,46 @@ export default function Home() {
             ]);
             setCurrentProduct("");
           }}
-          className="border-solid border-2 p-2"
+          className="rounded-2xl border-white border-4 px-2 flex justify-center items-center"
         >
-          Add product
+          <Image src="/assets/enter.svg" height="40" width="40" />
         </button>
-        <label for="file-input">
-          <Image src="/assets/camera.svg" height="50" width="50" />
-        </label>
-        <input
-          className="hidden"
-          id="file-input"
-          type="file"
-          accept="image/*"
-          onChange={async (e) => {
-            setIsLoading(true);
-            if (e.target.files.length === 0) {
-              return;
-            }
-            const response = await uploadImage(e.target.files);
-            setGuesses(response.guesses);
-            setIsLoading(false);
-          }}
-        />
+        <div className="rounded-2xl border-white border-4 px-2 flex justify-center items-center">
+          <label for="file-input" className="flex justify-center items-center">
+            <Image src="/assets/camera.svg" height="40" width="40" />
+          </label>
+          <input
+            className="hidden"
+            id="file-input"
+            type="file"
+            accept="image/*"
+            onChange={async (e) => {
+              setIsLoading(true);
+              if (e.target.files.length === 0) {
+                return;
+              }
+              const response = await uploadImage(e.target.files);
+              setGuesses(response.guesses);
+              setIsLoading(false);
+            }}
+          />
+        </div>
       </div>
-      <div className="grid grid-cols-3">
+      <div className="flex p-4 space-x-4 flex-wrap space-y-4">
         {products.map((product, index) => {
           return (
-            <div key={index} className="flex space-x-2">
-              <div>{product}</div>
-              <button
-                className="border-solid border-2 p-2"
-                onClick={() => {
-                  setProducts(products.filter((_, i) => i !== index));
-                }}
-              >
-                <Image src="/assets/delete.svg" height="50" width="50" />
-              </button>
-            </div>
+            <button
+              onClick={() => {
+                setProducts(products.filter((_, i) => i !== index));
+              }}
+              key={index}
+              className="flex bg-white rounded-2xl py-1 px-4 justify-center items-center"
+            >
+              <div className="font-light text-xl text-light-green mr-2">
+                {product}
+              </div>
+              <Image src="/assets/delete.svg" height="20" width="20" />
+            </button>
           );
         })}
 

@@ -87,18 +87,21 @@ export default function Result() {
           <ul className="mt-5">
             {isLoading
               ? "...loading"
-              : stores.results.map((store, index) => {
-                  return (
-                    <li className="text-blue-500 " key={index}>
-                      <a
-                        target="_blank"
-                        href={`https://www.google.com/maps/search/?api=1&query=${store.geometry.location.lat},${store.geometry.location.lng}`}
-                      >
-                        🛒 {store.name}
-                      </a>
-                    </li>
-                  );
-                })}
+              : stores.results
+                  .filter((store) => !store.types.includes("supermarket"))
+                  .map((store, index) => {
+                    console.log("STORE:", store);
+                    return (
+                      <li className="text-blue-500 " key={index}>
+                        <a
+                          target="_blank"
+                          href={`https://www.google.com/maps/search/?api=1&query=Google&query_place_id=${store.place_id}`}
+                        >
+                          🛒 {store.name}
+                        </a>
+                      </li>
+                    );
+                  })}
           </ul>
         </div>
       </div>

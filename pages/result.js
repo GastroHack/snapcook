@@ -7,8 +7,8 @@ const getNearbyPlaces = async (lat, lot) => {
   return res.json();
 };
 
-const getRecipesByIdsDetails = async (arrayOfIds) => {
-  const res = await fetch(`/api/recipeByIdsDetails?arrayOfIds=${arrayOfIds}`);
+const getRecipesByIdsDetails = async (recipeId) => {
+  const res = await fetch(`/api/recipeByIdsDetails?arrayOfIds=${recipeId}`);
 
   return res.json();
 };
@@ -35,8 +35,8 @@ export default function Result() {
     window.navigator.geolocation.getCurrentPosition(success);
 
     if (router.query.recipeId) {
-      const recipesById = await getRecipesByIdsDetails([router.query.recipeId]);
-      setRecipe(recipesById[0]);
+      const recipeById = await getRecipesByIdsDetails([router.query.recipeId]);
+      setRecipe(recipeById[0]);
     }
   }, []);
 

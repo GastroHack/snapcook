@@ -1,6 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 
+const getMissingProducts = async (products) => {
+  const res = await fetch(
+    `/api/missingProducts?ingredients=${products.join(",")}`
+  );
+  return res.json();
+};
+
 
 function uploadImage(file) {
 
@@ -17,13 +24,6 @@ function uploadImage(file) {
 
 }
 
-const getMissingProducts = async (products) => {
-  const res = await fetch(
-    `/api/missingProducts?ingredients=${products.join(",")}`
-  );
-  return res.json();
-};
-
 export default function Home() {
     const [currentProduct, setCurrentProduct] = useState("");
     const [products, setProducts] = useState([]);
@@ -37,7 +37,7 @@ export default function Home() {
     setIsLoading(false);
   };
 
-  useEffect(() => {
+    useEffect(() => {
     if (isLoading) {
       setTimeout(() => {
         router.push({

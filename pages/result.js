@@ -23,11 +23,12 @@ export default function Result() {
 
     getNearbyPlaces(crd.latitude, crd.longitude)
       .then((res) => {
-        console.log(res);
         setStores(res);
         setIsLoading(false);
       })
-      .catch(console.warn);
+      .catch((err) => {
+        throw err;
+      });
   };
 
   React.useEffect(async () => {
@@ -62,9 +63,9 @@ export default function Result() {
         <ul>
           {isLoading
             ? "...loading"
-            : stores.results.map((store) => {
+            : stores.results.map((store, index) => {
                 return (
-                  <li>
+                  <li key={index}>
                     <a
                       href={`https://www.google.com/maps/search/?api=1&query=${store.geometry.location.lat},${store.geometry.location.lng}`}
                     >

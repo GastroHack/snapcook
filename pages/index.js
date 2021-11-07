@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
+const GUESS  = 'guess';
+const TYPED = 'typed';
+const DISMISSIBLE = 'dismissible';
+
 const getMissingProducts = async (products) => {
   const res = await fetch(
     `/api/missingProducts?ingredients=${products.join(",")}`
@@ -8,22 +12,6 @@ const getMissingProducts = async (products) => {
   return res.json();
 };
 
-function uploadImage(file) {
-  const formData = new FormData();
-  formData.append("files", file[0]);
-
-  return fetch("/api/guesser", {
-    method: "POST",
-    body: formData
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .catch((err) => {
-      console.log("response", err);
-      throw err;
-    });
-}
 
 export default function Home() {
   const [currentProduct, setCurrentProduct] = useState("");
@@ -34,10 +22,32 @@ export default function Home() {
   const router = useRouter();
 
   const searchRecipes = async () => {
-    const recipes = await getMissingProducts(products);
+    const recipes = await getMissingProducts(products.map((product) => {
+        return product.title
+    }));
     setRecipes(recipes);
     setIsLoading(false);
   };
+
+    function uploadImage(file) {
+        const formData = new FormData();
+        formData.append("files", file[0]);
+        setIsLoading(true);
+
+        return fetch("/api/guesser", {
+            method: "POST",
+            body: formData
+        })
+            .then((response) => {
+                setIsLoading(false);
+                return response.json();
+            })
+            .catch((err) => {
+                console.log("response", err);
+                setIsLoading(false);
+                throw err;
+            });
+    }
 
   return (
     <div className="h-full w-full flex flex-col justify-center items-center">
@@ -52,7 +62,7 @@ export default function Home() {
         <button
           disabled={!currentProduct}
           onClick={() => {
-            setProducts([...products, currentProduct]);
+            setProducts([...products, {title:currentProduct.toLowerCase(), type:TYPED}]);
             setCurrentProduct("");
           }}
           className="border-solid border-2 p-2"
@@ -80,10 +90,13 @@ export default function Home() {
       {products.map((product, index) => {
         return (
           <div key={index} className="flex space-x-2">
-            <div>{product}</div>
+            <div>{product.title}</div>
             <button
               className="border-solid border-2 p-2"
               onClick={() => {
+                  if(product.type === GUESS) {
+                     setGuesses([...guesses, product.title])
+                  }
                 setProducts(products.filter((_, i) => i !== index));
               }}
             >
@@ -105,17 +118,29 @@ export default function Home() {
             <button
               key={index}
               onClick={() => {
-                setProducts([...products, guess.toLowerCase()]);
+                setProducts([...products, {title:guess.toLowerCase(), type:GUESS}]);
+                  setGuesses(guesses.filter((guessToRemove) => guessToRemove.toLowerCase() !== guess.toLowerCase()));
               }}
             >
-              {guess}
+              {guess.toLowerCase()}
             </button>
           );
         })}
       </div>
-
+        {guesses.length > 0 && (
+            <button onClick={() => {
+                setProducts(products.map((product) => {
+                    if(product.type === GUESS) {
+                        product.type=DISMISSIBLE;
+                    }
+                    return product;
+                }))
+                setGuesses([])
+            }} className="border-solid border-2 p-2">
+                Close
+            </button>
+        )}
       {recipes.map((recipe) => {
-        console.log(recipe);
         return (
           <button
             onClick={() => {
@@ -132,7 +157,7 @@ export default function Home() {
             key={recipe.id}
           >
             {recipe.title}
-            <img src={recipe.image} className="w-12 h-12 rounded" />
+            <img src={recipe.image} className="w-12 h-12 rounded" alt={recipe.title}/>
           </button>
         );
       })}

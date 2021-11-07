@@ -7,8 +7,8 @@ const getNearbyPlaces = async (lat, lot) => {
   return res.json();
 };
 
-const getRecipeDetails = async (id) => {
-  const res = await fetch(`/api/recipeDetails?id=${id}`);
+const getRecipesByIdsDetails = async (arrayOfIds) => {
+  const res = await fetch(`/api/recipeByIdsDetails?arrayOfIds=${arrayOfIds}`);
 
   return res.json();
 };
@@ -16,6 +16,7 @@ const getRecipeDetails = async (id) => {
 export default function Result() {
   const router = useRouter();
   const [stores, setStores] = useState([]);
+  const [recipe, setRecipe] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const success = (pos) => {
     const crd = pos.coords;
@@ -29,14 +30,33 @@ export default function Result() {
       .catch(console.warn);
   };
 
-  React.useEffect(() => {
+  React.useEffect(async () => {
     window.navigator.geolocation.getCurrentPosition(success);
-    console.log(router);
-    getRecipeDetails(router.query.recipeId);
+
+    if (router.query.recipeId) {
+      const recipesById = await getRecipesByIdsDetails([router.query.recipeId]);
+      setRecipe(recipesById[0]);
+    }
   }, []);
 
   return (
     <div>
+      {recipe && recipe.analyzedInstructions ? (
+        <>
+          <p>{recipe.title}</p>
+          <p>
+            {recipe.analyzedInstructions
+              .map(({ steps }) => {
+                return steps
+                  .map(({ step }) => {
+                    return step;
+                  })
+                  .join(",");
+              })
+              .flat()}
+          </p>
+        </>
+      ) : null}
       <div>you still need to buy: </div>
       <div>
         <ul>

@@ -15,6 +15,8 @@ export default function Home() {
   const [guesses, setGuesses] = useState([]);
   const router = useRouter();
 
+  console.log("trigger build test");
+
   const searchRecipes = async () => {
     router.push({
       pathname: "/recipes",
